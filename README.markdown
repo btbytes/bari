@@ -36,8 +36,7 @@ Explanation of the files:
 
 * `Makefile` -- main "script" to drive the compilation
 * `style.css` -- style for the HTML files (uses [water.css](https://kognise.github.io/water.css/))
-* `index.py` -- script to generate the home page
-* `archive.py` -- script to generate the archive page
+* `bari` -- script to generate the home page
 * `inc.before` -- If you want to add more links (eg: about), this is where you add it.
 * `inc.after` -- If you want to add a copyright to the footer, this is where you add it.
 

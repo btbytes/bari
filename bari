@@ -6,29 +6,26 @@ SHOW_ON_HOME_PAGE = 5
 def gen_tags(allmd):
     tags = {}
     for md in allmd:
-        with open(md, 'r') as f:
+        with open(md, "r") as f:
             lines = f.readlines()
             title = lines[0].strip()
             date = md[:10]
             for line in lines:
-                if line.startswith('◊'):
-                    doctags = [
-                        tag.lstrip('◊').strip() for tag in line.split(' ')
-                    ]
+                if line.startswith("◊"):
+                    doctags = [tag.lstrip("◊").strip() for tag in line.split(" ")]
                     for dt in doctags:
-                        link = md.replace('.md', '.html')
-                        meta = {'title': title, 'date': date, 'link': link}
+                        link = md.replace(".md", ".html")
+                        meta = {"title": title, "date": date, "link": link}
                         if dt in tags.keys():
                             tags[dt].append(meta)
                         else:
                             tags[dt] = [meta]
 
-    with open('index.md', 'a') as f:
-        f.write('\n## Tags\n')
+    with open("index.md", "a") as f:
+        f.write("\n## Tags\n")
         for k in sorted(tags.keys()):
             f.write('\n\n<span id="{k}" class="tagged">{k}</span>: '.format(k=k))
-            tsoup = ' '.join(
-                ['◊[{title}]({link})'.format(**meta) for meta in tags[k]])
+            tsoup = " ".join(["◊[{title}]({link})".format(**meta) for meta in tags[k]])
             f.write(tsoup)
 
 
@@ -38,42 +35,42 @@ def gen_home(allmd):
     else:
         s = len(allmd)
     selected = allmd[-s:]
-    with open('index.md', 'w') as f:
+    with open("index.md", "w") as f:
         for post in reversed(selected):
-            with open(post, 'r') as fn:
+            with open(post, "r") as fn:
                 date = post[:10]
-                link = post.replace('.md', '.html')
+                link = post.replace(".md", ".html")
                 lines = fn.readlines()
                 title = lines[0]
                 f.write('<div class="post">')
-                f.write(f'<date>{date}</date>\n')
-                f.write(f'[{title}]({link})\n')
+                f.write(f"<date>{date}</date>\n")
+                f.write(f"[{title}]({link})\n")
                 for line in proc_file(post):
                     f.write(line)
-                f.write('</div>\n')
+                f.write("</div>\n")
 
 
 def gen_archive(allmd):
     years = list(reversed(sorted(list(set([md[:4] for md in allmd])))))
     if len(allmd) <= SHOW_ON_HOME_PAGE:
         return
-    with open('index.md', 'a') as a:
-        a.write('\n## Archive\n')
+    with open("index.md", "a") as a:
+        a.write("\n## Archive\n")
         for post in reversed(allmd[SHOW_ON_HOME_PAGE:]):
             date = post[:10]
-            with open(post, 'r') as fn:
+            with open(post, "r") as fn:
                 lines = fn.readlines()
                 title = lines[0]
-                link = post.replace('.md', '.html')
+                link = post.replace(".md", ".html")
                 year = post[:4]
                 if year in years:
-                    a.write('### {year}\n'.format(year=year))
+                    a.write("### {year}\n".format(year=year))
                     years.remove(year)
-                a.write('<date>%s</date> [%s](%s)\n\n' % (date, title, link))
+                a.write("<date>%s</date> [%s](%s)\n\n" % (date, title, link))
 
 
 def process_file(fpath):
-    print(''.join(proc_file(fpath)))
+    print("".join(proc_file(fpath)))
 
 
 def proc_file(fpath):
@@ -81,25 +78,32 @@ def proc_file(fpath):
     with open(fpath) as f:
         lines = f.readlines()
         for line in lines[1:]:
-            if line.startswith('◊'):
-                doctags = [tag.lstrip('◊').strip() for tag in line.split(' ')]
-                compiled.append(' '.join([
-                    '<a href="index.html#{tag}" class="tag {tag}">{tag}</a> '.
-                    format(tag=tag) for tag in doctags
-                ]))
-                compiled.append('\n')
+            if line.startswith("◊"):
+                doctags = [tag.lstrip("◊").strip() for tag in line.split(" ")]
+                compiled.append(
+                    " ".join(
+                        [
+                            '<a href="index.html#{tag}" class="tag {tag}">{tag}</a> '.format(
+                                tag=tag
+                            )
+                            for tag in doctags
+                        ]
+                    )
+                )
+                compiled.append("\n")
             else:
                 compiled.append(line)
     return compiled
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import glob
     import sys
-    allmd = glob.glob('2*.md')
+
+    allmd = glob.glob("2*.md")  # hoping this software is good till year 2999
     allmd.sort()
     if len(sys.argv) > 2:
-        if sys.argv[1] == 'process':
+        if sys.argv[1] == "process":
             process_file(sys.argv[2])
     else:
         gen_home(allmd)
